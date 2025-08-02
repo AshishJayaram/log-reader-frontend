@@ -1,0 +1,27 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="search-form">
+  <mat-form-field appearance="outline">
+    <mat-label>Vehicle ID</mat-label>
+    <input matInput formControlName="vehicle" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>Error Code</mat-label>
+    <input matInput formControlName="code" />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>From</mat-label>
+    <input matInput [matDatepicker]="fromPicker" formControlName="from" />
+    <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+    <mat-datepicker #fromPicker></mat-datepicker>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline">
+    <mat-label>To</mat-label>
+    <input matInput [matDatepicker]="toPicker" formControlName="to" />
+    <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+    <mat-datepicker #toPicker></mat-datepicker>
+  </mat-form-field>
+
+  <button mat-flat-button color="primary" type="submit">Search</button>
+</form>

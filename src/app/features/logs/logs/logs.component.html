@@ -1,0 +1,9 @@
+<app-search-form (search)="onSearch($event)"></app-search-form>
+
+<div *ngIf="logs.length > 0; else noData">
+  <app-logs-table [logs]="logs"></app-logs-table>
+</div>
+
+<ng-template #noData>
+  <p style="padding: 1rem;">No logs to display. Try searching.</p>
+</ng-template>
