@@ -4,3 +4,10 @@ export interface LogEntry {
   code: string;
   message: string;
 }
+
+export interface LogEntryResponse {
+  data: LogEntry[];
+  total: number;
+  page: number;
+  limit: number;
+}

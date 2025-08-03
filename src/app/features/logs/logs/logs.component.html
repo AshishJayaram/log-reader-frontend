@@ -1,7 +1,19 @@
 <app-search-form (search)="onSearch($event)"></app-search-form>
 
+<div class="upload-section">
+  <input type="file" (change)="onFileSelected($event)" accept=".txt" />
+  <button (click)="uploadSelectedFile()" [disabled]="!selectedFile">Upload Logs</button>
+</div>
+
 <div *ngIf="logs.length > 0; else noData">
-  <app-logs-table [logs]="logs"></app-logs-table>
+  <app-logs-table
+    [logs]="logs"
+    [page]="page"
+    [limit]="limit"
+    [total]="total"
+    (paginationChange)="onPaginationChange($event)"
+  ></app-logs-table>
+
 </div>
 
 <ng-template #noData>
