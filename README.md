@@ -53,22 +53,27 @@ State Management (signals-based)
 
 ✅ Log Upload
 Upload plain .txt log files following the predefined structure. Logs are parsed and persisted to a SQLite database.
+
 🔍 Dynamic Filtering (Multi-Criteria)
 Users can apply any combination of the following filters:
 vehicleId, level (e.g., INFO, ERROR), code, from and to date ranges (ISO 8601 format)
 Filters are combinable, meaning users can filter by multiple fields simultaneously. Backend applies all active filters using efficient TypeORM conditions.
+
 📊 Pagination & Page-Level Caching
 Logs are paginated, and each unique combination of filters + page + sort is cached using Angular signals for fast back-navigation and reduced API calls.
+
 ↕️ Sorting
-Logs can be sorted by any valid field (timestamp, level, vehicleId, etc.) in ascending or descending order using the query parameters:
-?sort=timestamp&sortOrder=desc
+Logs can be sorted by any valid field (timestamp, level, vehicleId, etc.) in ascending or descending order by clicking on the column. The arrows are only visible on hovering over the column headers.
+
 📁 Upload Accordion
 The log upload section is elegantly tucked into a collapsible accordion panel, keeping the UI minimal.
+
 🎨 Material UI with Cyan Theme
 Responsive layout
 Highlighted table headers
 Consistent form field styling
 Distinctive filter/search area
+
 ⚡Signals-based State Management:
 Fast and reactive
 Automatic rerendering on state change
