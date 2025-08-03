@@ -4,22 +4,27 @@ import { SearchFormComponent } from '../components/search-form/search-form.compo
 import { LogsTableComponent } from '../components/logs-table/logs-table.component';
 import { LogsService } from '../../../core/services/logs.service';
 import { LogEntry } from '../../../core/models/log-entry.model';
+import { MatIconModule } from '@angular/material/icon'; // ✅ Import this
 
 @Component({
   selector: 'app-logs',
   standalone: true,
-  imports: [CommonModule, SearchFormComponent, LogsTableComponent],
+  imports: [CommonModule, SearchFormComponent, LogsTableComponent, MatIconModule],
   templateUrl: './logs.component.html',
   styleUrls: ['./logs.component.scss'],
 })
 export class LogsComponent {
   logs: LogEntry[] = [];
   selectedFile: File | null = null;
+  sort: string = 'timestamp';
+  sortOrder: 'asc' | 'desc' = 'asc';
+
 
   page = 1;
   limit = 10;
   total = 0;
   filters: any = {};
+  showUpload = false;
 
   constructor(private logsService: LogsService) {}
 
@@ -28,7 +33,13 @@ export class LogsComponent {
   }
 
   fetchLogs(): void {
-    const criteria = { ...this.filters, page: this.page, limit: this.limit };
+    const criteria = {
+      ...this.filters,
+      page: this.page,
+      limit: this.limit,
+      sort: this.sort,
+      sortOrder: this.sortOrder,
+    };
     this.logsService.getLogs(criteria).subscribe({
       next: (res) => {
         this.logs = res.data;
@@ -74,6 +85,22 @@ export class LogsComponent {
   onPaginationChange(event: { page: number; limit: number }) {
     this.page = event.page;
     this.limit = event.limit;
+    this.fetchLogs();
+  }
+
+  onSortChange(event: { sort: string; sortOrder: 'asc' | 'desc' }) {
+    this.sort = event.sort;
+    this.sortOrder = event.sortOrder;
+    this.fetchLogs();
+  }
+
+  toggleUpload(): void {
+    this.showUpload = !this.showUpload;
+  }
+
+  onClearFilters(): void {
+    this.filters = {};
+    this.page = 1;
     this.fetchLogs();
   }
 }

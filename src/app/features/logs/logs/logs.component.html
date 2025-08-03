@@ -1,9 +1,27 @@
-<app-search-form (search)="onSearch($event)"></app-search-form>
+<div class="filters-wrapper">
+  <app-search-form (search)="onSearch($event)" (clear)="onClearFilters()"></app-search-form>
+  <br>
+  <div class="upload-toggle-wrapper">
+    <button class="toggle-upload mat-stroked-button" (click)="showUpload = !showUpload">
+      <span class="toggle-text">Upload Logs</span>
+      <mat-icon style="vertical-align: middle;">{{ showUpload ? 'expand_less' : 'expand_more' }}</mat-icon>
+    </button>
+  </div>
 
-<div class="upload-section">
-  <input type="file" (change)="onFileSelected($event)" accept=".txt" />
-  <button (click)="uploadSelectedFile()" [disabled]="!selectedFile">Upload Logs</button>
+  <!-- Upload Area -->
+  <div *ngIf="showUpload" class="upload-box">
+      <label for="fileInput" class="choose-button mat-stroked-button">
+        Choose Log File
+      </label>
+      <input id="fileInput" type="file" (change)="onFileSelected($event)" accept=".txt" hidden />
+      <button mat-raised-button color="primary" (click)="uploadSelectedFile()" [hidden]="!selectedFile">
+        <span class="upload-btn-content">Upload {{ selectedFile?.name }}</span>
+      </button>
+  </div>
+
 </div>
+
+
 
 <div *ngIf="logs.length > 0; else noData">
   <app-logs-table
@@ -12,8 +30,8 @@
     [limit]="limit"
     [total]="total"
     (paginationChange)="onPaginationChange($event)"
+    (sortChange)="onSortChange($event)"
   ></app-logs-table>
-
 </div>
 
 <ng-template #noData>

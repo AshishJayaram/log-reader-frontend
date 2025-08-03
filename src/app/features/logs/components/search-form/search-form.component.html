@@ -1,27 +1,40 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="search-form">
+<form (ngSubmit)="onSearch()">
   <mat-form-field appearance="outline">
     <mat-label>Vehicle ID</mat-label>
-    <input matInput formControlName="vehicle" />
+    <input matInput [(ngModel)]="criteria.vehicleId" name="vehicleId" />
   </mat-form-field>
 
   <mat-form-field appearance="outline">
-    <mat-label>Error Code</mat-label>
-    <input matInput formControlName="code" />
+    <mat-label>Code</mat-label>
+    <input matInput [(ngModel)]="criteria.code" name="code" />
   </mat-form-field>
 
   <mat-form-field appearance="outline">
-    <mat-label>From</mat-label>
-    <input matInput [matDatepicker]="fromPicker" formControlName="from" />
-    <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
-    <mat-datepicker #fromPicker></mat-datepicker>
+    <mat-label>Level</mat-label>
+    <mat-select [(ngModel)]="criteria.level" name="level">
+      <mat-option value="">All</mat-option>
+      <mat-option value="INFO">INFO</mat-option>
+      <mat-option value="WARNING">WARNING</mat-option>
+      <mat-option value="ERROR">ERROR</mat-option>
+    </mat-select>
   </mat-form-field>
 
-  <mat-form-field appearance="outline">
-    <mat-label>To</mat-label>
-    <input matInput [matDatepicker]="toPicker" formControlName="to" />
-    <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
-    <mat-datepicker #toPicker></mat-datepicker>
-  </mat-form-field>
+    <mat-form-field appearance="outline">
+      <mat-label>From</mat-label>
+      <input matInput [matDatepicker]="fromPicker" [(ngModel)]="criteria.from" name="from" />
+      <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+      <mat-datepicker #fromPicker></mat-datepicker>
+    </mat-form-field>
 
-  <button mat-flat-button color="primary" type="submit">Search</button>
+    <mat-form-field appearance="outline">
+      <mat-label>To</mat-label>
+      <input matInput [matDatepicker]="toPicker" [(ngModel)]="criteria.to" name="to" />
+      <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+      <mat-datepicker #toPicker></mat-datepicker>
+    </mat-form-field>
+
+  <div class="form-actions">
+    <button mat-raised-button color="primary" type="submit">Search</button>
+    <button mat-raised-button color="primary" type="button" (click)="onClear()">Clear Filters</button>
+  </div>
 </form>

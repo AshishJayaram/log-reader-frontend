@@ -1,0 +1,13 @@
+.form-actions{
+  display: flex;
+  gap: 0.5rem;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  background-color: transparent;
+}
+
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-flex {
+  background-color: white;
+  border-radius: 5px;
+}
