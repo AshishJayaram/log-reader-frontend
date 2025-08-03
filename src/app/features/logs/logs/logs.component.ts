@@ -1,10 +1,22 @@
-import { Component } from '@angular/core';
+import { Component, effect, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatIconModule } from '@angular/material/icon';
+
 import { SearchFormComponent } from '../components/search-form/search-form.component';
 import { LogsTableComponent } from '../components/logs-table/logs-table.component';
 import { LogsService } from '../../../core/services/logs.service';
 import { LogEntry } from '../../../core/models/log-entry.model';
-import { MatIconModule } from '@angular/material/icon'; // ✅ Import this
+
+import {
+  currentFilters,
+  currentLimit,
+  currentPage,
+  currentSort,
+  currentSortOrder,
+  currentCachedResult,
+  logsCache,
+  generateCacheKey,
+} from '../state/logs.store';
 
 @Component({
   selector: 'app-logs',
@@ -15,51 +27,66 @@ import { MatIconModule } from '@angular/material/icon'; // ✅ Import this
 })
 export class LogsComponent {
   logs: LogEntry[] = [];
-  selectedFile: File | null = null;
-  sort: string = 'timestamp';
-  sortOrder: 'asc' | 'desc' = 'asc';
-
-
-  page = 1;
-  limit = 10;
   total = 0;
-  filters: any = {};
+  selectedFile: File | null = null;
   showUpload = false;
 
-  constructor(private logsService: LogsService) {}
+  currentPage = currentPage;
+  currentLimit = currentLimit;
 
-  ngOnInit(): void {
-    this.fetchLogs(); // Load logs on init
-  }
+  private logsService = inject(LogsService);
 
-  fetchLogs(): void {
-    const criteria = {
-      ...this.filters,
-      page: this.page,
-      limit: this.limit,
-      sort: this.sort,
-      sortOrder: this.sortOrder,
-    };
-    this.logsService.getLogs(criteria).subscribe({
-      next: (res) => {
-        this.logs = res.data;
-        this.total = res.total;
-        this.page = res.page;
-        this.limit = res.limit;
-      },
-      error: (err) => console.error('Failed to fetch logs', err),
+  constructor() {
+    effect(() => {
+      const cached = currentCachedResult();
+      if (cached) {
+        this.logs = cached.data;
+        this.total = cached.total;
+      } else {
+        this.fetchLogsFromApi();
+      }
     });
   }
 
-  onSearch(criteria: any): void {
-    this.filters = criteria;
-    this.page = 1; // Reset page to 1 on new search
-    this.fetchLogs();
+  fetchLogsFromApi(): void {
+    const filters = currentFilters();
+    const page = currentPage();
+    const limit = currentLimit();
+    const sort = currentSort();
+    const sortOrder = currentSortOrder();
+
+    const key = generateCacheKey(filters, page, limit, sort, sortOrder);
+
+    this.logsService.getLogs({ page, limit, sort, sortOrder, ...filters }).subscribe({
+      next: (res) => {
+        logsCache.update((cache) => ({ ...cache, [key]: res }));
+      },
+      error: (err) => console.error('API fetch failed', err),
+    });
   }
 
-  onPageChange(newPage: number): void {
-    this.page = newPage;
-    this.fetchLogs();
+  onPaginationChange(event: { page: number; limit: number }) {
+    currentPage.set(event.page);
+    currentLimit.set(event.limit);
+  }
+
+  onSearch(newFilters: any) {
+    currentFilters.set(newFilters);
+    currentPage.set(1);
+    logsCache.set({}); // clear old cache
+  }
+
+  onSortChange(event: { sort: string; sortOrder: 'asc' | 'desc' }) {
+    currentSort.set(event.sort);
+    currentSortOrder.set(event.sortOrder);
+    currentPage.set(1);
+    logsCache.set({});
+  }
+
+  onClearFilters(): void {
+    currentFilters.set({});
+    currentPage.set(1);
+    logsCache.set({});
   }
 
   onFileSelected(event: Event): void {
@@ -75,32 +102,14 @@ export class LogsComponent {
     this.logsService.uploadLogs(this.selectedFile).subscribe({
       next: () => {
         console.log('Upload successful');
-        this.page = 1;
-        this.fetchLogs(); // Refresh logs after upload
+        currentPage.set(1);
+        logsCache.set({});
       },
       error: (err) => console.error('Upload failed', err),
     });
   }
 
-  onPaginationChange(event: { page: number; limit: number }) {
-    this.page = event.page;
-    this.limit = event.limit;
-    this.fetchLogs();
-  }
-
-  onSortChange(event: { sort: string; sortOrder: 'asc' | 'desc' }) {
-    this.sort = event.sort;
-    this.sortOrder = event.sortOrder;
-    this.fetchLogs();
-  }
-
   toggleUpload(): void {
     this.showUpload = !this.showUpload;
-  }
-
-  onClearFilters(): void {
-    this.filters = {};
-    this.page = 1;
-    this.fetchLogs();
   }
 }

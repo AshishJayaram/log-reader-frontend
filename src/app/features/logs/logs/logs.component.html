@@ -26,8 +26,8 @@
 <div *ngIf="logs.length > 0; else noData">
   <app-logs-table
     [logs]="logs"
-    [page]="page"
-    [limit]="limit"
+    [page]="currentPage()"
+    [limit]="currentLimit()"
     [total]="total"
     (paginationChange)="onPaginationChange($event)"
     (sortChange)="onSortChange($event)"
