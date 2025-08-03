@@ -6,6 +6,7 @@ import { SearchFormComponent } from '../components/search-form/search-form.compo
 import { LogsTableComponent } from '../components/logs-table/logs-table.component';
 import { LogsService } from '../../../core/services/logs.service';
 import { LogEntry } from '../../../core/models/log-entry.model';
+import { MatButtonModule } from '@angular/material/button';
 
 import {
   currentFilters,
@@ -21,7 +22,7 @@ import {
 @Component({
   selector: 'app-logs',
   standalone: true,
-  imports: [CommonModule, SearchFormComponent, LogsTableComponent, MatIconModule],
+  imports: [CommonModule, SearchFormComponent, LogsTableComponent, MatIconModule, MatButtonModule],
   templateUrl: './logs.component.html',
   styleUrls: ['./logs.component.scss'],
 })
@@ -111,5 +112,26 @@ export class LogsComponent {
 
   toggleUpload(): void {
     this.showUpload = !this.showUpload;
+  }
+
+  downloadCsv(): void {
+    const filters = currentFilters();
+    const sort = currentSort();
+    const sortOrder = currentSortOrder();
+
+    const queryParams = new URLSearchParams({
+      ...filters,
+      sort,
+      sortOrder
+    } as any).toString();
+
+    const url = `http://localhost:3000/logs/export?${queryParams}`;
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'logs.csv'; // this may be optional depending on backend
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   }
 }

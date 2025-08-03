@@ -32,6 +32,9 @@
     (paginationChange)="onPaginationChange($event)"
     (sortChange)="onSortChange($event)"
   ></app-logs-table>
+  <button mat-raised-button color="primary" (click)="downloadCsv()" type="button" class="download-csv-button">
+    Download as CSV
+  </button>
 </div>
 
 <ng-template #noData>
