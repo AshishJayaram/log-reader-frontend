@@ -7,6 +7,8 @@ import { LogsTableComponent } from '../components/logs-table/logs-table.componen
 import { LogsService } from '../../../core/services/logs.service';
 import { LogEntry } from '../../../core/models/log-entry.model';
 import { MatButtonModule } from '@angular/material/button';
+import { isLoading } from '../state/logs.store';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import {
   currentFilters,
@@ -22,7 +24,14 @@ import {
 @Component({
   selector: 'app-logs',
   standalone: true,
-  imports: [CommonModule, SearchFormComponent, LogsTableComponent, MatIconModule, MatButtonModule],
+  imports: [
+    CommonModule,
+    SearchFormComponent,
+    LogsTableComponent,
+    MatIconModule,
+    MatButtonModule,
+    MatProgressSpinnerModule,
+  ],
   templateUrl: './logs.component.html',
   styleUrls: ['./logs.component.scss'],
 })
@@ -34,6 +43,7 @@ export class LogsComponent {
 
   currentPage = currentPage;
   currentLimit = currentLimit;
+  isLoading = isLoading;
 
   private logsService = inject(LogsService);
 
@@ -49,22 +59,28 @@ export class LogsComponent {
     });
   }
 
-  fetchLogsFromApi(): void {
-    const filters = currentFilters();
-    const page = currentPage();
-    const limit = currentLimit();
-    const sort = currentSort();
-    const sortOrder = currentSortOrder();
+fetchLogsFromApi(): void {
+  const filters = currentFilters();
+  const page = currentPage();
+  const limit = currentLimit();
+  const sort = currentSort();
+  const sortOrder = currentSortOrder();
 
-    const key = generateCacheKey(filters, page, limit, sort, sortOrder);
+  const key = generateCacheKey(filters, page, limit, sort, sortOrder);
 
-    this.logsService.getLogs({ page, limit, sort, sortOrder, ...filters }).subscribe({
-      next: (res) => {
-        logsCache.update((cache) => ({ ...cache, [key]: res }));
-      },
-      error: (err) => console.error('API fetch failed', err),
-    });
-  }
+  isLoading.set(true); // 🔄 Start loader
+
+  this.logsService.getLogs({ page, limit, sort, sortOrder, ...filters }).subscribe({
+    next: (res) => {
+      logsCache.update((cache) => ({ ...cache, [key]: res }));
+      isLoading.set(false);
+    },
+    error: (err) => {
+      console.error('API fetch failed', err);
+      isLoading.set(false);
+    },
+  });
+}
 
   onPaginationChange(event: { page: number; limit: number }) {
     currentPage.set(event.page);

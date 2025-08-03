@@ -24,3 +24,6 @@ export const currentCachedResult = computed(() => {
   );
   return logsCache()[key];
 });
+
+export const isLoading = signal(false);
+

@@ -21,7 +21,9 @@
 
 </div>
 
-
+<div *ngIf="isLoading()" class="loader-wrapper">
+  <mat-progress-spinner mode="indeterminate" diameter="40"></mat-progress-spinner>
+</div>
 
 <div *ngIf="logs.length > 0; else noData">
   <app-logs-table
