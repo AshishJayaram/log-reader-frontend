@@ -53,6 +53,8 @@ State Management (signals-based)
 
 ✅ Log Upload
 Upload plain .txt log files following the predefined structure. Logs are parsed and persisted to a SQLite database.
+(Sample log - [2025-07-24 14:21:08] [VEHICLE_ID:1234] [ERROR] [CODE:U0420] [Steering a
+sensor malfunction])
 
 🔍 Dynamic Filtering (Multi-Criteria)
 Users can apply any combination of the following filters:
