@@ -56,7 +56,10 @@ Upload plain .txt log files following the predefined structure. Logs are parsed 
 (Sample log - [2025-07-24 14:21:08] [VEHICLE_ID:1234] [ERROR] [CODE:U0420] [Steering a
 sensor malfunction])
 
-🔍 Dynamic Filtering (Multi-Criteria)
+📁Download Logs as CSV
+Added CSV export functionality with current filters and sort order applied for seamless offline analysis and real world usability.
+
+🔍 Filtering (Multi-Criteria)
 Users can apply any combination of the following filters:
 vehicleId, level (e.g., INFO, ERROR), code, from and to date ranges (ISO 8601 format)
 Filters are combinable, meaning users can filter by multiple fields simultaneously. Backend applies all active filters using efficient TypeORM conditions.
