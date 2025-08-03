@@ -35,11 +35,17 @@ State Management (signals-based)
    ├── currentFilters
    ├── logsCache (stores paginated API data)
 
+
    graph TD
     A[User uploads log file] --> B[NestJS parses and stores to SQLite]
+
+
     C[User sets filters/page/sort] --> D[Angular Signals update]
+
     D --> E[LogsService fetches from backend]
+    
     E --> F[Logs stored in cache and displayed in table]
+    
     F --> G[Pagination or filter change clears cache]
 ✅ generateCacheKey() ensures cache reuse for identical filter/sort/page combinations
 
