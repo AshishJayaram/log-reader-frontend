@@ -84,6 +84,8 @@ Fast and reactive
 Automatic rerendering on state change
 Eliminates over-fetching and allows cache reuse
 
+Added Loader to cover edge cases.
+
 
 
 ## Assumptions
